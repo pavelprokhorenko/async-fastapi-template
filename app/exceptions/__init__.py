@@ -1,0 +1,6 @@
+class ObjectDoesNotExist(Exception):
+    ...
+
+
+class ObjectAlreadyExist(Exception):
+    ...

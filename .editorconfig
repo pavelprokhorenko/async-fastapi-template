@@ -1,0 +1,17 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 2
+
+[*.py]
+indent_size = 4
+line_length = 88
+known_first_party = app
+multi_line_output = 3
+recursive = true
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true

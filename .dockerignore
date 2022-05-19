@@ -1,0 +1,7 @@
+.venv/
+.vscode/
+.ops/.helm/
+.git/
+Dockerfile
+*.Dockerfile
+README.md
