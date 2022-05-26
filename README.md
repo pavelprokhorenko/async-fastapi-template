@@ -12,7 +12,7 @@
 ```dotenv
 # base
 SECRET_KEY=some-secret-key
-PROJECT_NAME=some-project-name
+PROJECT_NAME='Some Project Name'
 
 # databases
 POSTGRES_USER=postgres
@@ -21,13 +21,17 @@ POSTGRES_HOST=postgres
 POSTGRES_DB=postgres
 POSTGRES_TEST_DB=test
 PGDATA=/var/lib/postgresql/data/pgdata
+
+# SMTP
+SMTP_USER=some-email
+SMTP_PASSWORD=some-password
 ```
 * To generate hex 32 hex SECRET_KEY:
 ```console
 $ openssl rand -hex 32
 ```
 
-* Other project settings you can see in "app/core/config.py"
+* Other project settings (e.g. SMTP) you can see in "app/core/config.py"
 
 ## Development
 
