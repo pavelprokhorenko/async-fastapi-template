@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import EmailStr
 
 from app.schemas import BaseSchema
@@ -7,9 +5,9 @@ from app.schemas import BaseSchema
 
 class BaseUser(BaseSchema):
     email: EmailStr
-    phone_number: Optional[str] = ""
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
+    phone_number: str | None
+    is_active: bool | None = True
+    is_superuser: bool | None = False
 
 
 class UserIn(BaseUser):
@@ -19,10 +17,10 @@ class UserIn(BaseUser):
 
 
 class UserUpdate(BaseUser):
-    email: Optional[EmailStr]
-    password: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
+    email: EmailStr | None
+    password: str | None
+    first_name: str | None
+    last_name: str | None
 
 
 class User(BaseUser):

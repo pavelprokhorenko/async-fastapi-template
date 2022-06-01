@@ -1,7 +1,6 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Generic, Type, TypeVar
 
 from databases import Database
-from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import Table, delete, update
 
@@ -22,28 +21,24 @@ class CRUDBase(Generic[ModelTable, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    async def get(self, db: Database, *, model_id: Any) -> Optional[Any]:
+    async def get(self, db: Database, *, model_id: int) -> Any:
         return await db.fetch_one(
             self.model.select().where(self.model.c.id == model_id)
         )
 
     async def get_multi(
         self, db: Database, *, skip: int = 0, limit: int = 100
-    ) -> List[Any]:
+    ) -> list[Any]:
         return await db.fetch_all(self.model.select().offset(skip).limit(limit))
 
     async def create(self, db: Database, *, obj_in: CreateSchemaType) -> Any:
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = obj_in.dict(exclude_unset=True)
         db_query = self.model.insert().values(**obj_in_data)
         obj_id = await db.execute(db_query)
         return await self.get(db=db, model_id=obj_id)
 
     async def update(
-        self,
-        db: Database,
-        *,
-        db_obj: Any,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+        self, db: Database, *, db_obj: Any, obj_in: UpdateSchemaType | dict[str, Any]
     ) -> Any:
         if isinstance(obj_in, dict):
             update_data = obj_in
