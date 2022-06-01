@@ -24,6 +24,7 @@ async def login_access_token(
     user = await crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
     )
+
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not user.is_active:
@@ -54,6 +55,7 @@ async def recover_password(
             status_code=404,
             detail="The user with this username does not exist in the system.",
         )
+
     password_reset_token = security.generate_password_reset_token(user_id=db_user.id)
     background_tasks.add_task(
         utils.send_reset_password_email,
@@ -61,6 +63,7 @@ async def recover_password(
         fullname=crud.user.get_fullname(db_user=db_user),
         token=password_reset_token,
     )
+
     return dict(message="Password recovery email sent")
 
 
@@ -76,7 +79,9 @@ async def reset_password(
     email = security.verify_password_reset_token(token)
     if not email:
         raise HTTPException(status_code=400, detail="Invalid token")
+
     user = await crud.user.get_by_email(db, email=email)
+
     if not user:
         raise HTTPException(
             status_code=404,
@@ -84,9 +89,11 @@ async def reset_password(
         )
     elif not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+
     await crud.user.update(
         db,
         db_obj=user,
         obj_in=dict(hashed_password=security.get_password_hash(new_password)),
     )
+
     return dict(message="Password updated successfully")
