@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional
 
 from databases import Database
 
@@ -9,7 +9,7 @@ from app.schemas.user import UserIn, UserUpdate
 
 
 class CRUDUser(CRUDBase[type(user), UserIn, UserUpdate]):
-    async def get_by_email(self, db: Database, *, email: str) -> Optional[Any]:
+    async def get_by_email(self, db: Database, *, email: str) -> Any:
         return await db.fetch_one(
             self.model.select().where(self.model.c.email == email)
         )
@@ -21,7 +21,7 @@ class CRUDUser(CRUDBase[type(user), UserIn, UserUpdate]):
         return await self.get(db, model_id=user_id)
 
     async def update(
-        self, db: Database, *, db_obj: user, obj_in: Union[UserUpdate, Dict[str, Any]]
+        self, db: Database, *, db_obj: user, obj_in: UserUpdate | dict[str, Any]
     ) -> Any:
         if isinstance(obj_in, dict):
             update_data = obj_in
