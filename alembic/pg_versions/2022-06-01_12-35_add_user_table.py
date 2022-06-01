@@ -1,8 +1,8 @@
 """add user table
 
-Revision ID: 435efa3168af
+Revision ID: e0538c856957
 Revises: 2a124563c49c
-Create Date: 2022-06-01 12:18:20.967187
+Create Date: 2022-06-01 12:35:15.854573
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 import sqlalchemy_utils.types.email
 
 # revision identifiers, used by Alembic.
-revision = '435efa3168af'
+revision = 'e0538c856957'
 down_revision = '2a124563c49c'
 branch_labels = None
 depends_on = None
