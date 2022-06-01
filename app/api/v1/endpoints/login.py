@@ -58,7 +58,7 @@ async def recover_password(
     background_tasks.add_task(
         utils.send_reset_password_email,
         email_to=db_user.email,
-        full_name=crud.user.get_fullname(db_user=db_user),
+        fullname=crud.user.get_fullname(db_user=db_user),
         token=password_reset_token,
     )
     return dict(message="Password recovery email sent")

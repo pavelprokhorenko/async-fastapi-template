@@ -11,6 +11,7 @@ from fastapi import (
     Query,
     status,
 )
+from pydantic import EmailStr
 
 from app import crud, schemas, utils
 from app.api.deps import (
@@ -65,7 +66,7 @@ async def create_user(
     background_tasks.add_task(
         utils.send_new_account_email,
         email_to=user.email,
-        full_name=crud.user.get_fullname(db_user=user),
+        fullname=crud.user.get_fullname(db_user=user),
     )
     return await crud.user.create(db, obj_in=user)
 
@@ -167,29 +168,43 @@ async def delete_user(
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.User,
 )
-async def sign_up(
+async def open_sign_up(
     *,
-    user: schemas.UserIn = Body(...),
+    email: EmailStr = Body(...),
+    password: str = Body(...),
+    phone_number: str | None = Body(...),
+    first_name: str | None = Body(...),
+    last_name: str | None = Body(...),
     background_tasks: BackgroundTasks,
     db: Database = Depends(get_db_pg),
 ) -> Any:
     """
-    Sing up an unauthorized user.
+    Create new user without the need to be logged in.
     """
     if not settings.USERS_OPEN_SIGN_UP:
         raise HTTPException(
             status_code=403,
             detail="Open user registration is forbidden on this server",
         )
-    db_user = await crud.user.get_by_email(db, email=user.email)
+    db_user = await crud.user.get_by_email(db, email=email)
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The user with this email already exists.",
         )
+    user = await crud.user.create(
+        db,
+        obj_in=schemas.UserIn(
+            email=email,
+            password=password,
+            phone_number=phone_number,
+            first_name=first_name,
+            last_name=last_name,
+        ),
+    )
     background_tasks.add_task(
         utils.send_new_account_email,
         email_to=user.email,
-        full_name=crud.user.get_fullname(db_user=user),
+        fullname=crud.user.get_fullname(db_user=user),
     )
-    return await crud.user.create(db, obj_in=user)
+    return user
