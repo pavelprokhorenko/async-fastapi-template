@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
+from pydantic import AnyHttpUrl, BaseSettings, EmailStr, PostgresDsn, validator
 
 
 class Settings(BaseSettings):
@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: Optional[str]
-    SERVER_HOST: Optional[AnyHttpUrl]
+    SERVER_HOST: AnyHttpUrl
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://0.0.0.0:8001"]'
@@ -82,6 +82,7 @@ class Settings(BaseSettings):
         )
 
     # Email
+    SEND_EMAILS_TO_USERS: bool = True
     SMTP_TLS: bool = True
     SMTP_PORT: int = 587
     SMTP_HOST: str = "smtp.gmail.com"
@@ -106,6 +107,10 @@ class Settings(BaseSettings):
             and values.get("EMAILS_FROM_EMAIL")
         )
 
+    FIRST_SUPERUSER_USERNAME: EmailStr
+    FIRST_SUPERUSER_PASSWORD: str
+    FIRST_SUPERUSER_FIRST_NAME: str | None
+    FIRST_SUPERUSER_LAST_NAME: str | None
     USERS_OPEN_SIGN_UP: bool = False
 
 
