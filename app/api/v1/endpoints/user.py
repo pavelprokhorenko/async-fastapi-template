@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from databases import Database
 from fastapi import (
@@ -27,7 +27,7 @@ router = APIRouter()
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=List[schemas.User],
+    response_model=list[schemas.User],
     dependencies=[Depends(get_request_active_superuser)],
 )
 async def read_users(

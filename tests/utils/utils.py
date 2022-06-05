@@ -1,7 +1,7 @@
 import datetime
 import random
 import string
-from typing import Dict
+from typing import dict
 
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
@@ -41,7 +41,7 @@ def random_datetime() -> str:
     )
 
 
-async def get_superuser_token_headers(api_client: AsyncClient) -> Dict[str, str]:
+async def get_superuser_token_headers(api_client: AsyncClient) -> dict[str, str]:
     login_data = {
         "username": settings.FIRST_SUPERUSER_USERNAME,
         "password": settings.FIRST_SUPERUSER_PASSWORD,
