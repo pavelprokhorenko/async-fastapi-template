@@ -3,6 +3,9 @@ import random
 import string
 
 from fastapi.encoders import jsonable_encoder
+from httpx import AsyncClient
+
+from app.core.config import settings
 
 
 def random_lower_string() -> str:
@@ -35,3 +38,17 @@ def random_datetime() -> str:
     return jsonable_encoder(
         datetime.datetime.now() - datetime.timedelta(days=random.randint(0, 10_000))
     )
+
+
+async def get_superuser_token_headers(api_client: AsyncClient) -> dict[str, str]:
+    login_data = {
+        "username": settings.FIRST_SUPERUSER_USERNAME,
+        "password": settings.FIRST_SUPERUSER_PASSWORD,
+    }
+    resp = await api_client.post(
+        f"{settings.API_V1_STR}/login/access-token", data=login_data
+    )
+    tokens = resp.json()
+    access_token = tokens["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    return headers

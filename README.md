@@ -10,11 +10,12 @@
 
 * Create ".env" file and add environment variables to it:
 ```dotenv
-# base
+# Base
 SECRET_KEY=some-secret-key
 PROJECT_NAME='Some Project Name'
+SERVER_HOST=http://0.0.0.0:8881
 
-# databases
+# Databases
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_HOST=postgres
@@ -25,13 +26,19 @@ PGDATA=/var/lib/postgresql/data/pgdata
 # SMTP
 SMTP_USER=some-email
 SMTP_PASSWORD=some-password
+
+# Auth
+FIRST_SUPERUSER_USERNAME=user@user.com
+FIRST_SUPERUSER_PASSWORD=password
+FIRST_SUPERUSER_FIRST_NAME='first name'
+FIRST_SUPERUSER_LAST_NAME='last name'
 ```
 * To generate hex 32 hex SECRET_KEY:
 ```console
 $ openssl rand -hex 32
 ```
 
-* Other project settings (e.g. SMTP) you can see in "app/core/config.py"
+* Other project settings (e.g. SMPT) you can see in "app/core/config.py"
 
 ## Development
 
@@ -54,7 +61,7 @@ For testing, you should go inside the container and run the command `pytest .`
 
 ```console
 $ docker exec -it <FastAPI container ID> bash
-$ pytest .
+$ pytest tests --asyncio-mode=auto
 ```
 
 ## Project structure

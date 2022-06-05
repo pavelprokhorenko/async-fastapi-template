@@ -8,6 +8,9 @@ def send_email(email_to: str, email_subject: str, email_message: str) -> None:
     """
     Send email to "receiver_email" with message_text.
     """
+    if not settings.SEND_EMAILS_TO_USERS:
+        return
+
     message = (
         f"From: {settings.EMAILS_FROM_NAME}\n"
         f"Subject: {email_subject}\n"
