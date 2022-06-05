@@ -1,7 +1,6 @@
 import datetime
 import random
 import string
-from typing import dict
 
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient

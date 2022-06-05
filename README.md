@@ -13,6 +13,7 @@
 # Base
 SECRET_KEY=some-secret-key
 PROJECT_NAME='Some Project Name'
+SERVER_HOST=http://0.0.0.0:8881
 
 # Databases
 POSTGRES_USER=postgres
@@ -37,7 +38,7 @@ FIRST_SUPERUSER_LAST_NAME='last name'
 $ openssl rand -hex 32
 ```
 
-* Other project settings (e.g. SMTP) you can see in "app/core/config.py"
+* Other project settings (e.g. SMPT) you can see in "app/core/config.py"
 
 ## Development
 
@@ -60,7 +61,7 @@ For testing, you should go inside the container and run the command `pytest .`
 
 ```console
 $ docker exec -it <FastAPI container ID> bash
-$ pytest .
+$ pytest tests --asyncio-mode=auto
 ```
 
 ## Project structure
