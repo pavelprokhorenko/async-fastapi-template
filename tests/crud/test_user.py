@@ -169,6 +169,6 @@ async def test_remove_user(pg_db: Database) -> None:
     user = await crud.user.create(pg_db, obj_in=user_in)
 
     await crud.user.remove(pg_db, model_id=user.id)
-    non_existed_user = await crud.user.get_by_email(pg_db, email=email)
+    non_existing_user = await crud.user.get_by_email(pg_db, email=email)
 
-    assert non_existed_user is None
+    assert non_existing_user is None
