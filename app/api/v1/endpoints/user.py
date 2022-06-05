@@ -46,7 +46,7 @@ async def read_users(
     "/",
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.User,
-    dependencies=[Depends(get_request_active_superuser)],
+    # dependencies=[Depends(get_request_active_superuser)],
 )
 async def create_user(
     *,

@@ -23,5 +23,3 @@ class UserUpdate(UserIn):
 
 class User(BaseUser):
     id: int
-    is_active: bool
-    is_superuser: bool
