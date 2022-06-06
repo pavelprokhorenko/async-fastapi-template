@@ -33,7 +33,7 @@ FIRST_SUPERUSER_PASSWORD=password
 FIRST_SUPERUSER_FIRST_NAME='first name'
 FIRST_SUPERUSER_LAST_NAME='last name'
 ```
-* To generate hex 32 hex SECRET_KEY:
+* To generate 32 byte SECRET_KEY:
 ```console
 $ openssl rand -hex 32
 ```
