@@ -181,9 +181,8 @@ async def test_open_sign_up(api_client: AsyncClient, pg_db: Database):
         data = {"email": username, "password": password}
 
         response = await api_client.post(
-            f"{settings.API_V1_STR}/user/sign-up/", json=data
+            f"{settings.API_V1_STR}/user/sign-up", json=data
         )
-
         assert 200 <= response.status_code < 300
         created_user = response.json()
         user = await crud.user.get_by_email(pg_db, email=username)
