@@ -177,9 +177,9 @@ async def open_sign_up(
     *,
     email: EmailStr = Body(...),
     password: str = Body(...),
-    phone_number: str | None = Body(...),
-    first_name: str | None = Body(...),
-    last_name: str | None = Body(...),
+    phone_number: str | None = Body(None),
+    first_name: str | None = Body(None),
+    last_name: str | None = Body(None),
     background_tasks: BackgroundTasks,
     db: Database = Depends(get_db_pg),
 ) -> Any:
