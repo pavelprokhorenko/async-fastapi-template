@@ -1,13 +1,17 @@
+from typing import Any
+
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import ORJSONResponse
 
 from app.api.v1.router import api_router
 from app.core.config import settings
 
 app = FastAPI(
-    title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    default_response_class=ORJSONResponse,
 )
 
 # Set all CORS enabled origins
@@ -24,11 +28,11 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
 @app.middleware("http")
-async def catch_exceptions(request: Request, call_next):
+async def catch_exceptions(request: Request, call_next) -> Any:
     try:
         return await call_next(request)
     except Exception as exc:
-        return JSONResponse(
+        return ORJSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content=jsonable_encoder({"msg": str(exc)}),
         )
