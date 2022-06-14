@@ -25,7 +25,7 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.middleware("http")
 async def sql_middleware(request: Request, call_next):
-    """Catch all SQLAlchemy exceptions"""
+    """Catch all SQL exceptions"""
     try:
         return await call_next(request)
     except Exception as exc:
