@@ -1,5 +1,5 @@
 [flake8]
-max-line-length = 120
-exclude = .git,__pycache__,__init__.py,.mypy_cache,.pytest_cache,app/db/base.py
-select = C,E,F,W,B,B950
-extend-ignore = E203, E501
+max-line-length = 88
+select = C,E,F,W,B,B9
+ignore = E203, E501, W503
+exclude = __init__.py,app/db/base.py
