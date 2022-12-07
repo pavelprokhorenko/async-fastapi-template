@@ -1,30 +1,15 @@
-from collections.abc import Generator
-from contextlib import contextmanager
-
-from sqlalchemy import create_engine
-from sqlalchemy.engine import Engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
 
-
-def create_postgres_engine() -> Engine:
-    return create_engine(settings.POSTGRES_URL, pool_pre_ping=True)
-
-
-postgres_engine = create_postgres_engine()
-
-engines = {"postgres": postgres_engine}
-
-SessionLocalPG = sessionmaker(
-    autocommit=False, autoflush=False, bind=engines["postgres"]
+engine = create_async_engine(
+    settings.POSTGRES_URL, echo=settings.DEBUG, pool_pre_ping=True
 )
-
-
-@contextmanager
-def postgres_session() -> Generator:
-    session = SessionLocalPG()
-    try:
-        yield session
-    finally:
-        session.close()
+Session = sessionmaker(
+    engine,
+    class_=AsyncSession,
+    autoflush=False,
+    autocommit=False,
+    expire_on_commit=False,
+)
