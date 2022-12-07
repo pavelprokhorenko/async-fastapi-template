@@ -1,12 +1,11 @@
-FROM python:3.10
+# Dockerfile
 
-ENV PATH="${PATH}:/root/.poetry/bin"
+FROM python:3.10-bullseye
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - && \
-    poetry config virtualenvs.create false
-COPY ./pyproject.toml ./poetry.lock ./
-RUN poetry install --no-interaction --no-dev --no-root --no-ansi -vvv
-
+# copy source and install dependencies
+ENV VIRTUAL_ENV=/venv
+RUN python3.10 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ENV PYTHONPATH=/app
 
@@ -14,9 +13,14 @@ WORKDIR /app
 
 COPY . .
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
-RUN chmod +x ./docker-entrypoint.sh && \
+COPY requirements.txt ./requirements.txt
+RUN apt-get update && \
+    apt-get install -y libpq-dev python3-dev && \
+    chmod +x ./docker-entrypoint.sh && \
     ln -s ./docker-entrypoint.sh /
 
-EXPOSE 8080
+RUN pip install -r ./requirements.txt
 
-ENTRYPOINT ["sh", "./docker-entrypoint.sh" ]
+# start service
+STOPSIGNAL SIGTERM
+CMD ["sh", "docker-entrypoint.sh"]
