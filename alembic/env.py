@@ -1,68 +1,90 @@
-from __future__ import with_statement
-
-import os
-import sys
+import asyncio
 from logging.config import fileConfig
 
-from sqlalchemy.engine import Engine
-from sqlalchemy.schema import MetaData
+from sqlalchemy import engine_from_config, pool
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
-from app.db.base import postgres_metadata
-from app.db.session import postgres_engine
+from app.core.config import settings
+from app.db.base import Base
 
-parent_dir = os.path.abspath(os.getcwd())
-sys.path.append(parent_dir)
-
+# this is the Alembic Config object, which provides
+# access to the values within the .ini file in use.
 config = context.config
+
+# Interpret the config file for Python logging.
+# This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
-
-def render_item(obj_type, obj, autogen_context):
-    """Apply custom rendering for selected items."""
-    if obj_type == "type" and obj.__class__.__module__.startswith("sqlalchemy_utils."):
-        autogen_context.imports.add(f"import {obj.__class__.__module__}")
-        if hasattr(obj, "choices"):
-            return f"{obj.__class__.__module__}.{obj.__class__.__name__}(choices={obj.choices})"
-        else:
-            return f"{obj.__class__.__module__}.{obj.__class__.__name__}()"
-
-    # default rendering for other objects
-    return False
+# add your model"s MetaData object here
+# for "autogenerate" support
+# from myapp import mymodel
+# target_metadata = mymodel.Base.metadata
+target_metadata = Base.metadata
 
 
-class Migrator:
-    def __init__(self, engine: Engine, target_metadata: MetaData) -> None:
-        self.engine = engine
-        self.target_metadata = target_metadata
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
 
-    def migrate(self) -> None:
-        connectable = config.attributes.get("connection", None)
-        if connectable is None:
-            connectable = self.engine.connect()
-        context.configure(
-            connection=connectable,
-            target_metadata=self.target_metadata,
-            compare_type=True,
-            render_item=render_item,
+
+def run_migrations_offline():
+    """Run migrations in "offline" mode.
+
+    This configures the context with just a URL
+    and not an Engine, though an Engine is acceptable
+    here as well.  By skipping the Engine creation
+    we don"t even need a DBAPI to be available.
+
+    Calls to context.execute() here emit the given string to the
+    script output.
+
+    """
+    url = settings.POSTGRES_URL
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+async def run_migrations_online():
+    """Run migrations in "online" mode.
+
+    In this scenario we need to create an Engine
+    and associate a connection with the context.
+
+    """
+    configuration = config.get_section(config.config_ini_section)
+    configuration["sqlalchemy.url"] = settings.POSTGRES_URL
+    connectable = AsyncEngine(
+        engine_from_config(
+            configuration,
+            prefix="sqlalchemy.",
+            poolclass=pool.NullPool,
+            future=True,
         )
-        with context.begin_transaction():
-            self.prepare_migration_context()
-            context.run_migrations()
+    )
 
-    def prepare_migration_context(self) -> None:
-        pass
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
 
-
-class PostgresMigrator(Migrator):
-    pass
+    await connectable.dispose()
 
 
-def run_migrations_online() -> None:
-    if config.config_ini_section == "postgres":
-        migrator = PostgresMigrator(postgres_engine, postgres_metadata)
-
-    migrator.migrate()
-
-
-run_migrations_online()
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    asyncio.run(run_migrations_online())

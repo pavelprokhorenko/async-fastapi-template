@@ -1,2 +1,2 @@
-from app.db.metadata import postgres_metadata
+from app.db.base_class import Base
 from app.models import *

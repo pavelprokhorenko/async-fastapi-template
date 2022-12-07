@@ -1,6 +1,7 @@
 import logging
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from pydantic import AnyHttpUrl, BaseSettings, EmailStr, PostgresDsn, validator
 
@@ -17,6 +18,7 @@ class Settings(BaseSettings):
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://0.0.0.0:8001"]'
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
+    DEBUG: bool = False
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: str | list[str]) -> list[str] | str:

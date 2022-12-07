@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pytest
 from databases import Database
 from httpx import AsyncClient
@@ -13,7 +11,7 @@ pytestmark = pytest.mark.usefixtures("use_postgres")
 
 
 async def test_get_users_superuser_me(
-    api_client: AsyncClient, superuser_token_headers: Dict[str, str]
+    api_client: AsyncClient, superuser_token_headers: dict[str, str]
 ) -> None:
     response = await api_client.get(
         f"{settings.API_V1_STR}/user/me", headers=superuser_token_headers
@@ -29,7 +27,7 @@ async def test_get_users_superuser_me(
 
 
 async def test_get_users_normal_user_me(
-    api_client: AsyncClient, normal_user_token_headers: Dict[str, str]
+    api_client: AsyncClient, normal_user_token_headers: dict[str, str]
 ) -> None:
     response = await api_client.get(
         f"{settings.API_V1_STR}/user/me", headers=normal_user_token_headers
@@ -120,7 +118,7 @@ async def test_create_user_existing_username(
 
 
 async def test_create_user_by_normal_user(
-    api_client: AsyncClient, normal_user_token_headers: Dict[str, str]
+    api_client: AsyncClient, normal_user_token_headers: dict[str, str]
 ) -> None:
     username = random_email()
     password = random_lower_string()

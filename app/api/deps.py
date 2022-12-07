@@ -1,4 +1,5 @@
-from typing import Any, Generator, Optional
+from collections.abc import Generator
+from typing import Any, Optional
 
 from databases import Database
 from fastapi import Depends, HTTPException, status
