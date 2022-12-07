@@ -1,19 +1,14 @@
-import sqlalchemy
-import sqlalchemy_utils
+from sqlalchemy import Boolean, Column, Integer, String
 
-from app.db.metadata import postgres_metadata
+from app.db.base_class import Base
 
-user = sqlalchemy.Table(
-    "user",
-    postgres_metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True, index=True),
-    sqlalchemy.Column(
-        "email", sqlalchemy_utils.EmailType, unique=True, index=True, nullable=False
-    ),
-    sqlalchemy.Column("hashed_password", sqlalchemy.String, nullable=False),
-    sqlalchemy.Column("phone_number", sqlalchemy.String),
-    sqlalchemy.Column("first_name", sqlalchemy.String),
-    sqlalchemy.Column("last_name", sqlalchemy.String),
-    sqlalchemy.Column("is_active", sqlalchemy.Boolean, default=True),
-    sqlalchemy.Column("is_superuser", sqlalchemy.Boolean, default=False),
-)
+
+class User(Base):
+    id: int = Column(Integer, primary_key=True, auto_created=True)
+    email: str = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password: str = Column(String(127), nullable=False)
+    phone_number: str = Column(String(63))
+    first_name: str = Column(String(63))
+    last_name: str = Column(String(63))
+    is_active: bool = Column(Boolean, server_default=True)
+    is_superuser: bool = Column(Boolean, server_default=True)
